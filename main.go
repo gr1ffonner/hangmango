@@ -6,11 +6,8 @@ import (
 	"strings"
 )
 
-var (
-	secret string = "danya"
-
-	hangmanStates = map[int]string{
-		1: `
+var hangmanStates = map[int]string{
+	1: `
      ________
      |/      |
      |      (_)
@@ -20,7 +17,7 @@ var (
      |
     _|___
   `,
-		2: `
+	2: `
      ________
      |/      |
      |      (_)
@@ -30,7 +27,7 @@ var (
      |
     _|___
   `,
-		3: `
+	3: `
      ________
      |/      |
      |      (_)
@@ -40,7 +37,7 @@ var (
      |
     _|___
   `,
-		4: `
+	4: `
      ________
      |/      |
      |      (_)
@@ -50,7 +47,7 @@ var (
      |
     _|___
   `,
-		5: `
+	5: `
      ________
      |/      |
      |      (_)
@@ -60,7 +57,7 @@ var (
      |
     _|___
   `,
-		6: `
+	6: `
      ________
      |/      |
      |      (_)
@@ -70,8 +67,7 @@ var (
      |
     _|___
   `,
-	}
-)
+}
 
 const (
 	alphabet string = "abcdefghijklmnopqrstuvwxyz"
@@ -118,6 +114,12 @@ func typeLetter() string {
 }
 
 func main() {
+	secret, err := getWord()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	secret = strings.ToLower(secret)
 	var userInput string
 
 	fmt.Println("Helloooooo, here is a hangman game written in Golang for learning purposes")
@@ -125,6 +127,13 @@ func main() {
 	for {
 		fmt.Print("Do you want to start a new game? [Y]es [N]o: ")
 		fmt.Scanln(&userInput)
+
+		userInput = strings.ToLower(userInput)
+
+		if userInput != "y" && userInput != "n" {
+			fmt.Println("Invalid input. Please type 'y' or 'n'.")
+			continue
+		}
 
 		if strings.ToLower(userInput) == "n" {
 			fmt.Println("Bye bye!!!")
@@ -169,8 +178,9 @@ func main() {
 					incorrectGuesses++
 					printHangmanState(incorrectGuesses)
 					if incorrectGuesses == 6 {
-						fmt.Printf("%s", hangmanStates[6])
+						fmt.Printf("%s\n", hangmanStates[6])
 						fmt.Println("Game over! You've made too many incorrect guesses.")
+						fmt.Printf("The secret word is: %s\n", secret)
 						break
 					}
 				}
