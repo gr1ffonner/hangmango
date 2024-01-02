@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 )
 
@@ -88,12 +87,29 @@ func hideWord(word string) string {
 }
 
 func unhideWord(word string, hiddenWord string, letter string) string {
+	// Convert the letter to lowercase to handle case-insensitive matching
+	letter = strings.ToLower(letter)
+
+	// Use a flag to track if the letter was correctly guessed
+	letterCorrectlyGuessed := false
+
 	// Iterate over the original word to update the hidden word
 	for i, v := range word {
 		if strings.ToLower(string(v)) == letter {
 			// Check if the letter was already correctly guessed
-			hiddenWord = hiddenWord[:i] + letter + hiddenWord[i+1:]
+			if string(hiddenWord[i]) == letter {
+				fmt.Println("You've already guessed the letter '", letter, "'.")
+			} else {
+				// Replace the corresponding '*' with the guessed letter
+				hiddenWord = hiddenWord[:i] + letter + hiddenWord[i+1:]
+				letterCorrectlyGuessed = true
+			}
 		}
+	}
+
+	// If the letter was not correctly guessed, print a message
+	if !letterCorrectlyGuessed {
+		fmt.Println("There is no letter '", letter, "' in the secret word.")
 	}
 
 	return hiddenWord
@@ -139,7 +155,6 @@ func main() {
 			fmt.Println("Bye bye!!!")
 			break
 		} else {
-			guesses := make([]string, 0)
 			fmt.Println("Sooooo, let's start!!!")
 			hiddenWord := hideWord(secret)
 			fmt.Println(hiddenWord)
@@ -147,16 +162,9 @@ func main() {
 			fmt.Println(hangman)
 			for {
 				letter := typeLetter()
-				letter = strings.ToLower(letter)
-				if slices.Contains(guesses, letter) {
-					fmt.Println("You've already guessed this letter. Try again.")
-					continue
-				}
 
 				if strings.Contains(secret, letter) {
 					hiddenWord = unhideWord(secret, hiddenWord, letter)
-					guesses = append(guesses, letter)
-					fmt.Println("Your guesses: ", guesses)
 					fmt.Println(hiddenWord)
 
 					// Check if the word is completely revealed
@@ -165,11 +173,10 @@ func main() {
 						break
 					}
 				} else {
-					fmt.Println(hiddenWord)
 					fmt.Println("There is no letter '", letter, "' in the secret word.")
-					guesses = append(guesses, letter)
-					fmt.Println("Your guesses: ", guesses)
 					incorrectGuesses++
+
+					// Print hangman state and check if the player has too many incorrect guesses
 					printHangmanState(incorrectGuesses)
 					if incorrectGuesses == 6 {
 						fmt.Println(err6)
