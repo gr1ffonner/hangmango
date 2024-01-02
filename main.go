@@ -6,78 +6,83 @@ import (
 	"strings"
 )
 
-var secret string = "danya"
+var (
+	secret string = "danya"
 
-const (
-	star    string = "*"
-	hangman string = `
-     ________
-     |/      |
-     |     
-     |    
-     |   
-     |  
-     |
-    _|___
-  `
-	err1 string = `
+	hangmanStates = map[int]string{
+		1: `
      ________
      |/      |
      |      (_)
-     |      
-     |     
-     |    
+     |
+     |
+     |
      |
     _|___
-  `
-	err2 string = `
+  `,
+		2: `
      ________
      |/      |
      |      (_)
      |       |
      |       |
-     |      
+     |
      |
     _|___
-  `
-
-	err3 string = `
+  `,
+		3: `
      ________
      |/      |
      |      (_)
      |      \|
      |       |
-     |      
+     |
      |
     _|___
-  `
-	err4 string = `
+  `,
+		4: `
      ________
      |/      |
      |      (_)
      |      \|/
      |       |
-     |      
+     |
      |
     _|___
-  `
-	err5 string = `
+  `,
+		5: `
      ________
      |/      |
      |      (_)
      |      \|/
      |       |
-     |      / 
+     |        \
      |
     _|___
-  `
-	err6 string = `
+  `,
+		6: `
      ________
      |/      |
      |      (_)
      |      \|/
      |       |
      |      / \
+     |
+    _|___
+  `,
+	}
+)
+
+const (
+	alphabet string = "abcdefghijklmnopqrstuvwxyz"
+	star     string = "*"
+	hangman  string = `
+     ________
+     |/      |
+     |     
+     |    
+     |   
+     |  
      |
     _|___
   `
@@ -100,22 +105,8 @@ func unhideWord(word string, hiddenWord string, letter string) string {
 }
 
 func printHangmanState(incorrectGuesses int) {
-	switch incorrectGuesses {
-	case 1:
-		fmt.Println(err1)
-		fmt.Printf("Incorrect Guesses: %d\n", incorrectGuesses)
-	case 2:
-		fmt.Println(err2)
-		fmt.Printf("Incorrect Guesses: %d\n", incorrectGuesses)
-	case 3:
-		fmt.Println(err3)
-		fmt.Printf("Incorrect Guesses: %d\n", incorrectGuesses)
-	case 4:
-		fmt.Println(err4)
-		fmt.Printf("Incorrect Guesses: %d\n", incorrectGuesses)
-	case 5:
-		fmt.Println(err5)
-		fmt.Printf("Incorrect Guesses: %d\n", incorrectGuesses)
+	if state, exists := hangmanStates[incorrectGuesses]; exists {
+		fmt.Printf("%s\nIncorrect Guesses: %d\n", state, incorrectGuesses)
 	}
 }
 
@@ -148,6 +139,12 @@ func main() {
 			for {
 				letter := typeLetter()
 				letter = strings.ToLower(letter)
+
+				if !strings.Contains(alphabet, letter) {
+					fmt.Println("Invalid letter. Please try again.")
+					continue
+				}
+
 				if slices.Contains(guesses, letter) {
 					fmt.Println("You've already guessed this letter. Try again.")
 					continue
@@ -172,7 +169,7 @@ func main() {
 					incorrectGuesses++
 					printHangmanState(incorrectGuesses)
 					if incorrectGuesses == 6 {
-						fmt.Println(err6)
+						fmt.Printf("%s", hangmanStates[6])
 						fmt.Println("Game over! You've made too many incorrect guesses.")
 						break
 					}
