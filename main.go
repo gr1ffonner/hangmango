@@ -138,52 +138,51 @@ func main() {
 		if strings.ToLower(userInput) == "n" {
 			fmt.Println("Bye bye!!!")
 			break
-		} else {
-			guesses := make([]string, 0)
-			fmt.Println("Sooooo, let's start!!!")
-			hiddenWord := hideWord(secret)
-			fmt.Println(hiddenWord)
-			incorrectGuesses := 0
-			fmt.Println(hangman)
-			for {
-				letter := typeLetter()
-				letter = strings.ToLower(letter)
+		}
+		guesses := make([]string, 0)
+		fmt.Println("Sooooo, let's start!!!")
+		hiddenWord := hideWord(secret)
+		fmt.Println(hiddenWord)
+		incorrectGuesses := 0
+		fmt.Println(hangman)
+		for {
+			letter := typeLetter()
+			letter = strings.ToLower(letter)
 
-				if !strings.Contains(alphabet, letter) {
-					fmt.Println("Invalid letter. Please try again.")
-					continue
+			if !strings.Contains(alphabet, letter) {
+				fmt.Println("Invalid letter. Please try again.")
+				continue
+			}
+
+			if slices.Contains(guesses, letter) {
+				fmt.Println("You've already guessed this letter. Try again.")
+				continue
+			}
+
+			if strings.Contains(secret, letter) {
+				hiddenWord = unhideWord(secret, hiddenWord, letter)
+				guesses = append(guesses, letter)
+				fmt.Println("Your guesses: ", guesses)
+				fmt.Println(hiddenWord)
+
+				// Check if the word is completely revealed
+				if hiddenWord == secret {
+					fmt.Println("Congratulations! You've revealed the word:", secret)
+					break
 				}
-
-				if slices.Contains(guesses, letter) {
-					fmt.Println("You've already guessed this letter. Try again.")
-					continue
+			} else {
+				fmt.Println(hiddenWord)
+				fmt.Println("There is no letter '", letter, "' in the secret word.")
+				guesses = append(guesses, letter)
+				fmt.Println("Your guesses: ", guesses)
+				incorrectGuesses++
+				if incorrectGuesses == 6 {
+					fmt.Printf("%s\n", hangmanStates[6])
+					fmt.Println("Game over! You've made too many incorrect guesses.")
+					fmt.Printf("The secret word is: %s\n", secret)
+					break
 				}
-
-				if strings.Contains(secret, letter) {
-					hiddenWord = unhideWord(secret, hiddenWord, letter)
-					guesses = append(guesses, letter)
-					fmt.Println("Your guesses: ", guesses)
-					fmt.Println(hiddenWord)
-
-					// Check if the word is completely revealed
-					if hiddenWord == secret {
-						fmt.Println("Congratulations! You've revealed the word:", secret)
-						break
-					}
-				} else {
-					fmt.Println(hiddenWord)
-					fmt.Println("There is no letter '", letter, "' in the secret word.")
-					guesses = append(guesses, letter)
-					fmt.Println("Your guesses: ", guesses)
-					incorrectGuesses++
-					printHangmanState(incorrectGuesses)
-					if incorrectGuesses == 6 {
-						fmt.Printf("%s\n", hangmanStates[6])
-						fmt.Println("Game over! You've made too many incorrect guesses.")
-						fmt.Printf("The secret word is: %s\n", secret)
-						break
-					}
-				}
+				printHangmanState(incorrectGuesses)
 			}
 		}
 	}
