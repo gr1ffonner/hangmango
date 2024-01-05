@@ -6,93 +6,13 @@ import (
 	"strings"
 )
 
-var hangmanStates = map[int]string{
-	1: `
-     ________
-     |/      |
-     |      (_)
-     |
-     |
-     |
-     |
-    _|___
-  `,
-	2: `
-     ________
-     |/      |
-     |      (_)
-     |       |
-     |       |
-     |
-     |
-    _|___
-  `,
-	3: `
-     ________
-     |/      |
-     |      (_)
-     |      \|
-     |       |
-     |
-     |
-    _|___
-  `,
-	4: `
-     ________
-     |/      |
-     |      (_)
-     |      \|/
-     |       |
-     |
-     |
-    _|___
-  `,
-	5: `
-     ________
-     |/      |
-     |      (_)
-     |      \|/
-     |       |
-     |        \
-     |
-    _|___
-  `,
-	6: `
-     ________
-     |/      |
-     |      (_)
-     |      \|/
-     |       |
-     |      / \
-     |
-    _|___
-  `,
-}
-
-const (
-	alphabet string = "abcdefghijklmnopqrstuvwxyz"
-	star     string = "*"
-	hangman  string = `
-     ________
-     |/      |
-     |     
-     |    
-     |   
-     |  
-     |
-    _|___
-  `
-)
-
 func hideWord(word string) string {
 	return strings.Repeat(star, len(word))
 }
 
 func unhideWord(word string, hiddenWord string, letter string) string {
-	// Iterate over the original word to update the hidden word
 	for i, v := range word {
 		if strings.ToLower(string(v)) == letter {
-			// Check if the letter was already correctly guessed
 			hiddenWord = hiddenWord[:i] + letter + hiddenWord[i+1:]
 		}
 	}
@@ -147,7 +67,6 @@ func main() {
 		fmt.Println(hangman)
 		for {
 			letter := typeLetter()
-			letter = strings.ToLower(letter)
 
 			if !strings.Contains(alphabet, letter) {
 				fmt.Println("Invalid letter. Please try again.")
